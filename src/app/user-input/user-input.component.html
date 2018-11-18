@@ -1,0 +1,6 @@
+<section>
+    <form [formGroup]="amiiboForm">
+      <input [formControl]="amiibo" />
+    </form>
+    <div class="amiibo"><img src="{{ imgSrc | async }}" /></div>
+</section>

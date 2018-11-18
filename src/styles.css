@@ -1,1 +1,117 @@
-/* You can add global styles to this file, and also import other style files */
+body {
+  --background-hue: 200;
+  --background-colour: hsl(var(--background-hue), 30%, 60%);
+  --accent-hue: 10;
+  background: var(--background-colour);
+  margin: 40px;
+  font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+}
+
+h1 {
+  color: transparent;
+  background: linear-gradient(hsl(0, 0%, 10%) 50%, hsl(0, 0%, 70%));
+  background-clip: text;
+  margin: 20px 0;
+  font-size: 48px;
+}
+
+h2 {
+  margin: 0;
+}
+
+h3 {
+  margin: 10px 0;
+  font-style: italic;
+}
+
+section {
+  border: 4px solid black;
+  border-radius: 10px;
+  background-color: hsla(0, 100%, 100%, .2);
+  box-shadow: inset 1px 1px 2px white;
+  padding: 20px;
+  margin-bottom: 30px;
+}
+
+code {
+  background-color: #444;
+  color: white;
+  font-weight: 800;
+  padding: 10px;
+  display: block;
+}
+code.inline {
+  color: currentColor;
+  background-color: transparent;
+  display: inline;
+  padding: 0;
+}
+
+code + h3 {
+  margin-top: 30px;
+}
+
+table {
+  border-collapse: collapse;
+  border: solid 2px black;
+}
+th, td {
+  padding: 10px;
+  border: solid 1px black;
+}
+td {
+  text-align: center;
+  min-width: 115px;
+}
+
+.next-page {
+  text-align: center;
+}
+.next-page a, button, input + label {
+  border: 2px solid black;
+  border-radius: 5px;
+  box-shadow: inset 1px 1px 2px white;
+  padding: 10px;
+  color: white;
+  text-decoration: none;
+  background-color: hsl(var(--accent-hue), 50%, 50%);
+  transition: box-shadow .1s;
+  cursor: pointer;
+}
+.next-page a:hover, input + label {
+  background-color: hsl(var(--accent-hue), 50%, 45%);
+}
+.next-page a:active, button.reveal-solution:active, input:active + label {
+  box-shadow: none;
+}
+
+button.reveal-solution {
+  background-color: hsl(100, 30%, 50%);
+}
+button.reveal-solution:hover {
+  background-color: hsl(100, 30%, 45%);
+}
+
+label {
+  margin-bottom: 10px;
+  display: inline-block;
+}
+
+input {
+  border: 2px solid black;
+  border-radius: 5px;
+  padding: 10px;
+  margin-right: 5px;
+}
+
+input[type="checkbox"]#show-answer {
+  position: absolute;
+  opacity: 0;
+}
+input[type="checkbox"] ~ .solution {
+  opacity: 0;
+  transition: opacity 2s;
+}
+input[type="checkbox"]:checked ~ .solution {
+  opacity: 1;
+}

@@ -1,0 +1,18 @@
+.important {
+  margin: auto;
+  margin-top: 10px;
+  padding: 20px;
+  background: var(--background-colour);
+  border-radius: 5px;
+  transition: box-shadow 2s;
+  font-style: italic;
+  font-weight: 800;
+}
+
+.important.raised {
+  box-shadow: 2px 2px 4px hsla(0, 0%, 0%, .4);
+}
+
+.highlight {
+  color: hsl(var(--background-hue), 75%, 50%);
+}

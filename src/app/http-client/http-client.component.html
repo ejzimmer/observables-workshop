@@ -1,0 +1,86 @@
+<section>
+  <h2>HttpClient</h2>
+  <p>
+    You've probably used (or at least seen) HttpClient in an Angular app.
+    And you've probably wondered why the **** its methods return Observables
+    instead of Promises. There are a couple of reasons:
+  </p>
+  <ul>
+    <li>Observables are cancellable</li>
+    <li>Observables can easily implement debounce and retry logic</li>
+    <li>Observables can handle requests that return multiple responses</li>
+  </ul>
+  <p>
+    You almost never want to do any of that, so Observables are really just a pain
+    in the arse. But let's play along for a moment.
+  </p>
+</section>
+
+<section>
+  <h2>Your mission</h2>
+  <p>
+    Below is a form. You enter the name of an Amiibo and it displays a picture of that 
+    Amiibo. Except it doesn't, because it's missing all the code. So you do the code.
+    (If you're not familiar with Amiibo, they're toys that can interact with your Nintendo
+    games so Nintendo can make more money).
+  </p>
+  <p>Things you need to know</p>
+  <ul>
+    <li>
+      The form's a template-driven form, which we wouldn't usually use, but whatevs. It's 
+      not production code. You can access the value in the input form via
+      <code class="inline">this.amiibo</code> in the class
+    </li>
+    <li>
+      The image is expecting it's src to be set via <code class="inline">this.imgSrc</code>
+    </li>
+    <li>
+      The URL for the Amiibo service is 
+      <code>`http://www.amiiboapi.com/api/amiibo/?name=$&#123;this.amiibo}`</code>
+    </li>
+    <li>
+      The service returns a list of Amiibo. You want the <code class="inline">image</code>
+      property of the first item in the list.
+    </li>
+    <li>
+      If you're lost for Amiibo names to search for, sonic, link, zelda and mario will all
+      return stuff
+    </li>
+  </ul>
+  <p>
+    The solution is below the form if you get stuck.
+  </p>
+</section>
+
+<section>
+  <form (submit)="getAmiibo()">
+      <input type="text" id="name" [(ngModel)]="amiibo" name="name" />
+      <button>Get Amiibo</button>
+  </form>
+  <div class="amiibo"><img *ngIf="imgSrc" [src]="imgSrc" /></div>
+</section>
+
+<section>
+    <input type="checkbox" id="show-answer" />
+    <label for="show-answer">Click here to reveal the solution!</label>
+    <pre class="solution"><code>getAmiibo() &#123;
+  this.http.get(`http://www.amiiboapi.com/api/amiibo/?name=$&#123;this.amiibo}`)
+    .subscribe((response: any) => this.imgSrc = response.amiibo[0].image);
+}</code></pre>
+</section>
+
+<section>
+  <h2>Pro tip</h2>
+  <p>
+    Don't need any of the fancy pants stuff from Observables in your HTTP calls?
+    You can just convert them to promises:
+  </p>
+  <code>this.http.get(url).toPromise().then(response => ...)</code>
+  <p>
+    The <code class="inline">toPromise</code> method will return you a Promise, 
+    subscribe to the Observable for you, and resolve your Promise when the 
+    Observable receives it's first value.
+  </p>
+  <p>Do whatever makes most sense for your project.</p>
+</section>
+<div class="next-page"><a [routerLink]="['/rxjs-in-angular']">So why would I ever even want Observables?</a></div>

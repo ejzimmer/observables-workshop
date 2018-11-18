@@ -1,0 +1,38 @@
+<section>
+  <h2>Let's start small</h2>
+  <p>Ok, so first up, let's just get an Observable to print its results to console.log</p>
+  <p>Have a look at <code class="inline">using-observables.component.ts</code></p>
+  <p>
+    This line
+    <code>
+        myObservable = of('good', 'news', 'everyone');
+    </code>
+    is creating an Observable that returns three values.
+  </p>
+  <p>
+    Your mission, should you choose to accept, is to subscribe to the Observable
+    and print the three values to the console. You can do this in the constructor or the 
+    ngOnInit or whatever. We're not writing production code here.
+  </p>
+</section>
+<section>
+  <input type="checkbox" id="show-answer" />
+  <label for="show-answer">Click here to reveal the solution!</label>
+  <pre class="solution"><code>ngOnInit() &#123;
+  this.myObserver.subscribe(result => console.log(result));
+&#125;</code></pre>
+</section>
+<section>
+  <h2>Do it all again</h2>
+  <p>
+    Now, just indulge me for a moment and subscribe to the Observable again.
+    Like literally just make another copy of the code you just wrote, and check
+    out what happens. 
+  </p>
+  <p>
+    It prints the same thing to the console again! That might not surprise you, but it's 
+    important to remember that an Observable isn't an EventStream or anything like that.
+    Every time you subscribe to it, it's like calling a function again.
+  </p>
+</section>
+<div class="next-page"><a [routerLink]="['/http-client']">Doing it for realsies</a></div>

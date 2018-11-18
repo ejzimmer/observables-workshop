@@ -1,0 +1,79 @@
+<h1>Observables</h1>
+
+<section>
+  <h2>Pull vs Push</h2>
+  <h3>Pull</h3>
+  <p>
+    How you're used to dealing with things. 
+    The consumer requests a value and the provider provides it.
+  </p>
+  <code>const myResult = myFunction();</code>
+  <h3>Push</h3>
+  <div>
+    The consumer requests a value. The provider decides when to provide it.
+    Promises are the most common manifestation of this.
+  </div>
+  <pre><code>let myResult;
+myAsyncRequest.then(result => myResult = result);</code></pre>
+</section>
+
+<section>
+  <h2>Single vs Multiple return values</h2>
+  <h3>Single return value</h3>
+  <p>
+    Again, how you're used to dealing with things.
+    Functions return a single value. Promises return a single value.
+  </p>
+  <code>const myResult = myFunction();</code>
+  <h3>Multiple return values</h3>
+  <p>Generators and iterators return multiple values.</p>
+  <pre><code>const iterator = myGenerator();
+const result1 = iterator.next();
+const result2 = iterator.next();</code></pre>
+</section>
+
+<section>
+  <table style="margin: auto">
+    <tr>
+      <th></th>
+      <th>Pull</th>
+      <th>Push</th>
+    </tr>
+    <tr>
+      <th>Single</th>
+      <td>function</td>
+      <td>promise</td>
+    </tr>
+    <tr>
+      <th>Multiple</th>
+      <td>iterator</td>
+      <td style="cursor: pointer" (click)="changeMysteryValue()">{{ mysteryValue }}</td>
+    </tr>
+  </table>
+  <div class="important" *ngIf="mysteryValue === 'Observable'">
+    Observables are like functions that can push multiple values
+  </div>
+</section>
+
+<section>
+  <h3>Ok, so they work a little bit differently to functions</h3>
+  <p>Instead of getting values like</p>
+  <code>const <span class="highlight">myResult</span> = myFunction()</code>
+  <p>we have to do something a little more complicated</p>
+  <code>myObservable.subscribe(result => const <span class="highlight">myResult</span> = result)</code>
+  <p>
+    Technically, the thing that gets passed into <code class="inline">subscribe</code> is an Observer.
+    Observers look something like this
+  </p>
+  <pre><code>const observer = &#123;
+  next: value => &#123; ... &#125;,
+  error: err => &#123; ... &#125;,
+  complete: () => &#123; ... &#125;,
+&#125;</code></pre>
+  <p>
+    But if you just pass in a function, <code class="inline">subscribe</code> will assume you're passing
+    the <code class="inline">next</code> handler and it'll all just work.
+  </p>
+</section>
+
+<div class="next-page"><a [routerLink]="['/using-observables']">Using observables</a></div>

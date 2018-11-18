@@ -1,0 +1,43 @@
+<section>
+  <h2>So what are Observables good for?</h2>
+  <p>
+    Observables are good for any situation where you want to be notified about
+    a change, and the thing could change multiple times. (If the thing can only
+    change once, a Promise is probably a better choice). So what kind of things 
+    would that be? User inputs, route changes and state changes are all good candidates.
+  </p>
+  <p>
+    Angular provides Observables for route changes and changes to values in form elements.
+    It also wraps native EventEmitters with an Observable. Services can use these 
+    wrapped EventEmitters to notify components (and other services) of actions and state
+    changes.
+  </p>
+</section>
+
+<section>
+  <h2>Observing routes</h2>
+  <p>
+    Why would you want to observe routes? Because sometimes the route can change without
+    the component reloading. For example, if you have a page with a parameter, and you
+    navigate to the same page with a different parameter, the component won't reload.
+    You can try it out by clicking the Change colour button below. It will add a number
+    to the route, which changes every time you click the button. The component won't reload
+    though - watch the console for proof. There's a <code class="inline">console.log</code>
+    in the constructor so you can see when it runs.
+  </p>
+  <p>
+    (Small note: if you change the URL in the browser's URL bar, the entire page will reload,
+    so you kinda need to use the button for this)
+  </p>
+  <button (click)="changeColour()">Change colour</button>
+  <p>
+    This time, your mission is to change the background colour to the colour specified in 
+    the URL! You can do this in the <code class="inline">ngOnInit</code> method of the 
+    <code class="inline">RxjsInAngular</code> component.
+  </p>
+  <ol>
+    <li>
+      <p>You can get the route parameters from <code class="inline">this.route.params</code></p>
+    </li>
+  </ol>
+</section>
