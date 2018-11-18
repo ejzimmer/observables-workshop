@@ -38,6 +38,31 @@
   <ol>
     <li>
       <p>You can get the route parameters from <code class="inline">this.route.params</code></p>
+      <p>The parameter you want is called <code class="inline">colour</code></p>
+      <input type="checkbox" id="show-params" />
+      <label for="show-params">Show me</label>
+      <pre class="solution"><code>this.route.params.subscribe((routes) => &#123;
+  const colour = routes.colour;
+});</code></pre>
+    </li>
+    <li>
+      <p>You can create an actual colour from the number you get using CSS's HSL function</p>
+      <input type="checkbox" id="show-hsl" />
+      <label for="show-hsl">Show me</label>
+      <code class="solution">const colour = `hsl($&#123;routes.colour}, 30%, 60%)`;</code>
+    </li>
+    <li>
+      <p>
+        And you can set the background colour by setting 
+        <code class="inline">style.backgroundColor</code> on the body element
+      </p>
+      <input type="checkbox" id="show-background-colour" />
+      <label for="show-background-colour">Show me</label>
+      <code class="solution">document.querySelector('body').style.backgroundColor = colour</code>
+      <p>
+        Setting styles directly on elements like this isn't a particularly "Angular" way to do 
+        things, but it'll do for our purposes.
+      </p>
     </li>
   </ol>
 </section>
