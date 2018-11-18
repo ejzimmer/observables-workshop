@@ -10,6 +10,7 @@ import { HttpClientComponent } from './http-client/http-client.component';
 import { HttpClientModule } from '@angular/common/http';
 import { UserInputComponent } from './user-input/user-input.component';
 import { RxjsInAngularComponent } from './rxjs-in-angular/rxjs-in-angular.component';
+import { EventEmittersComponent } from './event-emitters/event-emitters.component';
 
 @NgModule({
   declarations: [
@@ -18,7 +19,8 @@ import { RxjsInAngularComponent } from './rxjs-in-angular/rxjs-in-angular.compon
     UsingObservablesComponent,
     HttpClientComponent,
     UserInputComponent,
-    RxjsInAngularComponent
+    RxjsInAngularComponent,
+    EventEmittersComponent
   ],
   imports: [
     BrowserModule,

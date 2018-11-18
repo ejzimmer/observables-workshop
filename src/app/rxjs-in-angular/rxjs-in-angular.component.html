@@ -68,5 +68,39 @@
 </section>
 
 <section>
-  
+  <h2>Observing form values</h2>
+  <p>
+    You can also observe changes to the values of form inputs. Now, you could use this for things
+    like searching as the user types - like you often see in address fields. Today though, we're
+    going to use it to make googly eyes watch an input field as you type in it.
+  </p>
+  <p>
+    You want to subscribe to <code class="inline">this.watchMe.valueChanges</code>. On a value
+    change, you want to call <code class="inline">rotateEyes</code> with the amount you want
+    the eyes to rotate by. Something along the lines of 
+  </p>
+  <code>`$&#123;0.1 - (n * 0.01)}turn`</code>
+  <p>
+    should do the trick (where <code class="inline">n</code> is the number of characters typed in
+    the input field). But, of course, you can use whatever you like.
+  </p>
+  <form [formGroup]="eyesForm">
+    <div class="eyes">
+      <div class="eye"></div>
+      <div class="eye"></div>    
+    </div>
+    <input [formControl]="watchMe" (focus)="lookAtMe()" />
+  </form>
 </section>
+
+<section>
+    <input type="checkbox" id="show-eyes" />
+    <label for="show-eyes">A possible answer...</label>
+    <pre class="solution"><code>this.watchMe.valueChanges.subscribe(text => &#123;
+  const rotation = `$&#123;0.1 - text.length * 0.01}turn`;
+  this.rotateEyes(rotation);
+});</code></pre>
+</section>
+
+<div class="next-page"><a [routerLink]="['/event-emitters']">That was fun! But what about EventEmitters?</a></div>
+

@@ -5,6 +5,7 @@ import { UsingObservablesComponent } from './using-observables/using-observables
 import { HttpClientComponent } from './http-client/http-client.component';
 import { UserInputComponent } from './user-input/user-input.component';
 import { RxjsInAngularComponent } from './rxjs-in-angular/rxjs-in-angular.component';
+import { EventEmittersComponent } from './event-emitters/event-emitters.component';
 
 const routes: Routes = [
   {
@@ -26,6 +27,10 @@ const routes: Routes = [
   {
     path: 'rxjs-in-angular',
     component: RxjsInAngularComponent
+  },
+  {
+    path: 'event-emitters',
+    component: EventEmittersComponent
   },
   {
     path: 'user-input',
