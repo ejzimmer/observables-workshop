@@ -1,3 +1,265 @@
 <section>
   <h2>Event Emitters</h2>
+  <p>
+    You're probably familiar with events already - things like <code class="inline">click</code>
+    and <code class="inline">submit</code>. Things you can listen for in Angular using the 
+    banana notation.
+  </p>
+  <code>&lt;button (click)="clickHandler()">Click me!&lt;/button></code>
+  <p>You can also create your own custom events.</p>
+  <code>@Output() changeState = new EventEmitter&lt;string>();</code>
+  <p>And emit them.</p>
+  <code>done.emit('opened')</code>
+  <p>And you can listen for them just like standard events.</p>
+  <code>&lt;my-accordion (changeState)="handleStateChange($event)">&lt;/my-accordion></code>
+  <p>
+    EventEmitters are actually a special kind of Observable called a Subject. A Subject differs
+    from a standard Observable in two ways:
+  </p>
+  <ol>
+    <li>
+      It multicasts. If you subscribe to a Subject more than once, all those subscriptions
+      will point to the same "version" of the Subject. So, say you subscribe to the Subject
+      once and it emits three values. Your observer will receive those three values. But then
+      you subscribe with another observer. This new observer will get nothing, until the 
+      Subject emits a fourth value. Then both observers will receive the fourth value. 
+    </li>
+    <li>
+      It's both an observer and an Observable. You can subscribe to it, and you can send it
+      values. (That's actually what happens when you call <code class="inline">emit()</code>.
+      You pass a value into the EventEmitter and all its subscribers receive that value.)
+    </li> 
+  </ol>
+  <p>
+    So let's check out how that works.
+  </p>
 </section>
+
+<section>
+  <app-traffic-light></app-traffic-light>
+  <app-pedestrian-light></app-pedestrian-light>
+  <p>
+    So here we have two components. A set of traffic lights 
+    <code class="inline">TrafficLightComponent</code> and a pedestrian light 
+    <code class="inline">PedestrianLightComponent</code> (the button is part of the pedestrian
+    lights). There's also <code class="inline">LightService</code>, to facilitate communication
+    between the two component. (In this particular scenario, both the components live in the same 
+    parent component, so we could have just communicated via that. In the real world though, 
+    you'd usually use a service, or some other third-party class, so we're going to do that. Also, 
+    it would get messy having the code for this page along with the traffic light code all in together).
+  </p>
+  <p>
+    So, what do we want the traffic lights to do?
+  </p>
+  <ol>
+    <li>When the user clicks the pedestrian light button, the traffic lights should turn orange</li>
+    <li>After the traffic light has been orange for a little while, it should turn red</li>
+    <li>Once the traffic light is red, the pedestrian light should change to Walk</li>
+    <li>
+      Once the pedestrian light has been at Walk for a while, it should switch to Don't 
+      Walk, and flash
+    </li>
+    <li>After the pedestrian light has been flashing for a while, it should stop flashing</li>
+    <li>Once the pedestrian light stops flashing, the traffic light should go green</li>
+  </ol>
+  <p>
+    Ok, go! (Don't worry, all the CSS and HTML is in place, you just need to write TypeScript).
+    You can try and solve it yourself or follow the instructions below.
+  </p>
+</section>
+<section>
+    <h2>Change the traffic light to orange</h2>
+    <p>
+      First up, you need to notify the <code class="inline">LightService</code>
+      that you want the lights to change. You can do this by creating a 
+      <code class="inline">stopTraffic</code> method in the <code class="inline">LightService</code>
+      and calling it from your <code class="inline">PedestrianLightComponent</code>
+    </p>
+    <p>
+      Then you need to notify the <code class="inline">TrafficLightComponent</code> that you
+      want it to stop. <code class="inline">LightService</code> has no way to get a 
+      reference to the component though, so you can't just call a function on the component.
+      Observables to the rescue!
+    </p>
+    <p>
+      You can create an EventEmitter in <code class="inline">LightService</code>
+      and subscribe to it in the <code class="inline">TrafficLightComponent</code>. Then, when
+      the <code class="inline">stopTraffic</code> method in <code class="inline">LightService</code>
+      gets called, it can emit a 'stop' event from the EventEmitter.
+    </p>
+    <input type="checkbox" id="go-orange" />
+    <label for="go-orange">Shut up and show me the code</label>
+    <pre class="solution"><code>// in pedestrian-light.component.ts
+pressButton() &#123;
+  this.light = true;
+  this.lightService.stopTraffic();
+}
+
+// in light.service.ts
+export class LightService &#123;
+  lightState = new EventEmitter&lt;string>();
+
+  constructor() &#123; }
+
+  stopTraffic() &#123;
+    this.lightState.emit('stopping');
+  }
+}
+
+// in traffic-light.component.ts
+ngOnInit() &#123;
+  this.lightService.lightState.subscribe((state) => &#123;
+    if (state === 'stopping') &#123; this.stop(); }
+  });
+}
+
+stop() &#123;
+  this.lit = 'orange';
+}
+</code></pre>
+</section>
+
+<section>
+  <h2>Change the traffic light to red</h2>
+  <p>
+    This bit is actually super easy and doesn't require any Observables. Just create a delay
+    using <code class="inline">setTimeout</code>, then set the light to 'red'.
+  </p>
+  <input type="checkbox" id="go-red" />
+  <label for="go-red">You say 'just', but...</label>
+  <pre class="solution"><code>// in traffic-light.component.ts
+stop() &#123;
+  this.lit = 'orange';
+  setTimeout(() => &#123;
+    this.lit = 'red';
+  } , 3000);
+}</code></pre>    
+</section>
+
+<section>
+  <h2>Change the pedestrian light to walk</h2>
+  <p>
+    This is essentially the same as changing the traffic light to red, but in reverse.
+    We need to create a new method in <code class="inline">LightService</code> and call it from
+    <code class="inline">TrafficLightComponent</code> to notify it that the light is red.
+  </p>
+  <p>
+    Then we need our new method to emit a 'stopped' event. We also need 
+    <code class="inline">PedestrianLightComponent</code> to subscribe to the EventEmitter and 
+    update itself when it receives a 'stopped' event.
+  </p>
+  <p>
+    And you might want to code a little delay between the light turning red and notifying the 
+    pedestrian lights, just to make sure all the cars have cleared the intersection.
+  </p>
+  <input type="checkbox" id="start-walking" />
+  <label for="start-walking">Show me</label>
+  <pre class="solution"><code>// in traffic-light.component.ts
+stop() &#123;
+  this.lit = 'orange';
+  setTimeout(() => &#123;
+    this.lit = 'red';
+    setTimeout(
+      () => this.lightService.notifyStopped(), 500);
+  } , 3000);
+}
+
+// in light-service.ts
+notifyStopped() &#123;
+  this.lightState.emit('stopped');
+}
+
+// in pedestrian-light.component.ts
+ngOnInit() &#123;
+  this.lightService.lightState.subscribe((state) => &#123;
+    if (state === 'stopped') &#123; this.allowWalk() }
+  });
+}
+
+allowWalk() &#123;
+  this.light = false;
+  this.state = 'walk';
+}</code></pre>
+</section>
+
+<section>
+  <h2>Become a flasher</h2>
+  <p>
+    Another non-Observable bit - after the pedestrian light has been green for a bit, 
+    change it to flashing Don't Walk. The CSS is all there, you just need to set the class.
+  </p>
+  <input type="checkbox" id="finish-walking" />
+  <label for="finish-walking">Flash me</label>
+  <pre class="solution"><code>// in pedestrian-light.component.ts
+allowWalk() &#123;
+  this.light = false;
+  this.state = 'walk';
+
+  setTimeout(() => &#123;
+    this.state = 'stopping';
+  }, 5000);
+}</code></pre>
+</section>
+
+<section>
+  <h2>Put everything back how you found it</h2>
+  <p>
+    Once the pedestrian light has flashed for a bit, we need to put everything back how it ways
+    when we started - pedestrian light red, traffic light green. It's all stuff we've done before.
+  </p>
+  <ol>
+    <li>Change the pedestrian light to red, after an appropriate delay</li>
+    <li>
+      Notify <code class="inline">LightService</code> that the light has changed, by
+      creating a new method on <code class="inline">LightService</code> and calling it
+      from <code class="inline">PedestrianLightComponent</code>. 
+    </li>
+    <li>
+      <code class="inline">LightService</code> needs to notify any listeners that the pedestrian
+      lights have changed
+    </li>
+    <li>
+      And finally, <code class="inline">TrafficLightComponent</code> needs to listen for That
+      event and change back to red. You might want to leave a delay between the traffic light 
+      receiving the notification and the light actually changing, just to make
+      sure all the pedestrians have finished crossing the road. Or you might not.
+    </li>
+  </ol>
+  <input type="checkbox" id="finish-up" />
+  <label for="finish-up">Let's get this over and done with</label>
+  <pre class="solution"><code>// in pedestrian-light.component.ts
+allowWalk() &#123;
+  this.light = false;
+  this.state = 'walk';
+
+  setTimeout(() => &#123;
+    this.state = 'stopping';
+    setTimeout(() => &#123;
+      this.state = 'stop';
+      this.lightService.startTraffic();
+    }, 3000);
+  }, 5000);
+}
+
+// in light-service.ts
+startTraffic() &#123;
+  this.lightState.emit('go');
+}
+
+// in traffic-light.component.ts
+ngOnInit() &#123;
+  this.lightService.lightState.subscribe((state) => &#123;
+    if (state === 'stopping') &#123; this.stop(); }
+    else if (state === 'go') &#123; this.go(); }
+  });
+}
+
+go() &#123;
+  setTimeout(() => &#123;
+    this.lit = 'green';
+  }, 500); 
+}</code></pre>
+</section>
+
+<div class="next-page"><a [routerLink]="['/user-input']">Gosh. That was fun. What else can I do with Observables?</a></div>
+

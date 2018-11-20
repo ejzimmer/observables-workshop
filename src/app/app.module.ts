@@ -11,6 +11,8 @@ import { HttpClientModule } from '@angular/common/http';
 import { UserInputComponent } from './user-input/user-input.component';
 import { RxjsInAngularComponent } from './rxjs-in-angular/rxjs-in-angular.component';
 import { EventEmittersComponent } from './event-emitters/event-emitters.component';
+import { TrafficLightComponent } from './traffic-light/traffic-light.component';
+import { PedestrianLightComponent } from './pedestrian-light/pedestrian-light.component';
 
 @NgModule({
   declarations: [
@@ -20,7 +22,9 @@ import { EventEmittersComponent } from './event-emitters/event-emitters.componen
     HttpClientComponent,
     UserInputComponent,
     RxjsInAngularComponent,
-    EventEmittersComponent
+    EventEmittersComponent,
+    TrafficLightComponent,
+    PedestrianLightComponent
   ],
   imports: [
     BrowserModule,
