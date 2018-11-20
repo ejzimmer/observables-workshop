@@ -1,13 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, FormBuilder } from '@angular/forms';
-import { debounceTime, switchMap, map, filter, distinctUntilChanged, catchError } from 'rxjs/operators';
+import { debounceTime, switchMap, map, filter, distinctUntilChanged, catchError, skip, throttleTime, tap } from 'rxjs/operators';
 import { HttpClient } from '@angular/common/http';
 import { Observable, of } from 'rxjs';
 
 @Component({
   selector: 'app-user-input',
   templateUrl: './user-input.component.html',
-  styleUrls: ['../http-client/http-client.component.css']
+  styleUrls: ['../http-client/http-client.component.css', './user-input.component.css']
 })
 export class UserInputComponent implements OnInit {
   amiibo = new FormControl();
@@ -19,15 +19,6 @@ export class UserInputComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.imgSrc = this.amiibo.valueChanges.pipe(
-      filter(text => text.length > 2),
-      debounceTime(400),
-      distinctUntilChanged(),
-      switchMap(keys => this.search(keys)),
-      filter((response: any) => response.amiibo),
-      map((response: any) => response.amiibo[0].image)
-    )
-
   }
 
   search(term) {

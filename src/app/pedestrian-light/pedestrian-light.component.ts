@@ -7,33 +7,16 @@ import { LightService } from '../light.service';
   styleUrls: ['./pedestrian-light.component.css']
 })
 export class PedestrianLightComponent implements OnInit {
-  state = 'stop';
+  state = 'stop'; // this controls the walk/don't walk (stop = don't walk, walk = walk, stopping = flashing don't walk)
   light = false; // this controls the red light on the button. 
 
   constructor(private lightService: LightService) { }
 
   ngOnInit() {
-    this.lightService.lightState.subscribe((state) => {
-      if (state === 'stopped') { this.allowWalk() }
-    });
   }
 
   pressButton() {
     this.light = true;
-    this.lightService.stopTraffic();
-  }
-
-  allowWalk() {
-    this.light = false;
-    this.state = 'walk';
-
-    setTimeout(() => {
-      this.state = 'stopping';
-      setTimeout(() => {
-        this.state = 'stop';
-        this.lightService.startTraffic();
-      }, 3000);
-    }, 10000);
   }
 
 }

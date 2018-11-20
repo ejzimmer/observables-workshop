@@ -24,6 +24,14 @@ h3 {
   font-style: italic;
 }
 
+a {
+  color: hsl(var(--accent-hue), 50%, 20%);
+}
+
+p {
+  text-align: justify;
+}
+
 section {
   border: 4px solid black;
   border-radius: 10px;

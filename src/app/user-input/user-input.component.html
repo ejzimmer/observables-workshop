@@ -1,6 +1,194 @@
 <section>
-    <form [formGroup]="amiiboForm">
-      <input [formControl]="amiibo" />
-    </form>
-    <div class="amiibo"><img src="{{ imgSrc | async }}" /></div>
+  <h2>Things you can do with Observables other than subscribing to them</h2>
+  <p>
+    One of the fun things about Observables is you can do other stuff then just subscribe
+    to them. There are approximately one million* operators available for doing filtering
+    and transformation of Observables. In fact, we already saw one - toPromise, which 
+    transforms an Observable into a Promise.
+  </p>
+  <p><em>*not actually one million. More than ten though.</em></p>
+  <p>
+    These operators work similarly to the Array operators you might be used to - like
+    forEach, map, filter, every, some and reduce. For example, the filter operator returns
+    a new Observable which receives the values emitted by the original Observable and 
+    re-emits the ones which pass a given filter function.
+  </p>
+  <p>
+    There are also operators which do things like only take a value every 2 seconds (scan), only
+    allow a value every n milliseconds (debounceTime), or merge two Observables together 
+    (zip). There are way too many operators to go into - check out a more complete list
+    at <a href="https://rxjs-dev.firebaseapp.com/api" target="_blank" rel="noopener">
+    LearnRxJS.io</a>
+  </p>
+  <p>
+    The really fun thing about operators though, is that you can stack them, just like you 
+    can do with array operators. Each operator returns a new Observable, so you can call 
+    another operator on the Observable returned from a previous operator. You can't just chain 
+    them like you can do with array operators, sadly. Instead, you need to use the 
+    <code class="inline">pipe</code> operator, and pass all the other operators into that.
+  </p>
+  <pre><code>
+    // Create an observable that emits a number every 100ms
+    const myObservable = interval(100); // 0..1..2..3..
+    interval(100).pipe(
+      skip(6),  // 6..7..8.. (skip the first 6 values)
+      throttleTime(200), // 6..9..12.. (only take a value every 200ms)
+      map(number => number * 3), // 18..27..36.. (multiply each value by 3)
+      tap(number => console.log(number)) // tap kind of works like forEach
+    ).subscribe();
+  </code></pre>
+</section>
+
+<section>
+  <h2>Why can't we chain operators?</h2>
+  <p>
+    Array operators are chainable: ie you can do
+  </p>
+  <pre><code>myArray
+  .filter(filterFunction)
+  .map(mapFunction)
+  .filter(differentFilterFunction)
+  .reduce(reduceFuntion, startingValue)</code></pre>
+  <p>
+    which I think we can all agree is pretty fun. Observable operators have to be passed into
+    the <code class="inline">pipe</code> operator though, which is kind of lame.
+  </p>
+  <p>
+    The reason for this is that Observable operators aren't native JavaScript, so you have to
+    include the library for each operator. For chaining to work, all of the operators would have
+    to exist on the Observable prototype. That would mean that you'd have to include the code 
+    for every single operator whenever you wanted to use an Observable. And, as previously 
+    mentioned, there are a approximately a million operators, so that would be a lot of code 
+    that you're probably not using.
+  </p>
+  <p>
+    Earlier versions of RxJS got around this by allowing you to include individual operators and 
+    then essentially monkey-patching the Observable prototype, allowing you to chain operators, 
+    just like you can do with Arrays.
+  </p>
+  <p>
+    However, it is generally agreed that monkey-patching prototypes is not good practice, 
+    as it can interfere with the standards process. Monkey-patching of prototypes is the reason 
+    JavaScript has <code class="inline">String.prototype.includes</code>, instead of 
+    <code class="inline">String.prototype.contains</code>, like a sane language. The MooTools library
+    had implemented a monkey-patched version of <code class="inline">String.prototype.contains</code>
+    which was not compatible with the standards version, so the standards version had to be 
+    renamed, to avoid breaking all the websites out there using the library version. See also 
+    <a href="https://developers.google.com/web/updates/2018/03/smooshgate">Smooshgate</a>.
+  </p>
+  <p>
+    Unlike <code class="inline">String</code>, <code class="inline">Observables</code> aren't
+    part of the JavaScript standard, but there are some people who are trying to change that,
+    and I'm guessing their chances of making that happen are improved if they don't use messy
+    techniques like monkey-patching. So, as of RxJS version 6, we have to pipe our operators.
+  </p>
+</section>
+
+<section>
+  <h2>Your final mission</h2>
+  <p>
+    And that brings us to the final mission of this workshop. We're going to update our Amiibo 
+    form so that we don't need a submit button anymore. Instead, we're going to just start 
+    searching once the user starts typing in the search box. You've probably seen a pattern 
+    similar to this in an address lookup, which starts showing options just after you start 
+    typing. We have a few constraints we want to add though:
+  </p>
+  <ul>
+    <li>
+      If we start searching straight away, we're going to get the wrong answer. Let's wait
+      until the user has entered at least 3 characters before doing a search.
+    </li>
+    <li>
+      We don't really want to make a request after every character the user types. Let's only 
+      send a request every 400ms, max.
+    </li>
+    <li>
+      Once the user types more, we want to cancel the existing request and make a new one.
+    </li>
+  </ul>
+</section>
+
+<section>
+  <h2>The async pipe</h2>
+  <p>
+    Before you jump into the TypeScript, check out the HTML for displaying the image.
+  </p>
+  <code>&lt;img src="{{ '{{' }} imgSrc | async }}" /></code>
+  <p>
+    The async pipe allows us to use an Observable directly in our HTML. Once we receive 
+    a value from our Observable, our image source will be set to that value. The async 
+    pipe also takes care of subscribing to Observable, so we don't need to call 
+    <code class="inline">subscribe</code> in our controller.
+  </p>
+  <p>
+    Bonus: the async pipe also works with promises.
+  </p>
+</section>
+
+<section>
+  <form [formGroup]="amiiboForm">
+    <input [formControl]="amiibo" />
+  </form>
+  <div class="amiibo"><img src="{{ imgSrc | async }}" /></div>
+</section>
+
+<section>
+    <input type="checkbox" id="show-amiibo" />
+    <label for="show-amiibo">
+      I just want to know how to make the Amiibo display on the page.<br>
+      I can work out the rest of the constraints myself.
+    </label>
+    <pre class="solution"><code>ngOnInit() &#123;
+  this.imgSrc = this.amiibo.valueChanges.pipe(
+    map((response.any) => response.amiibo[0].image);
+  )</code></pre>
+</section>
+
+<section>
+  <h2>I'm sick of looking up operators</h2>
+  <p>Just tell me the names of the operators</p>
+  <div>
+    <input type="checkbox" id="filter" />
+    <label for="filter">Wait for 3 characters</label>
+    <code class="inline solution">filter(text => text.length > 2)</code>
+  </div>
+  <div>
+    <input type="checkbox" id="debounce" />
+    <label for="debounce">Only send a request every 400ms</label>
+    <code class="inline solution">debounceTime(400)</code>
+  </div>
+  <div>
+    <input type="checkbox" id="switch" />
+    <label for="switch">Cancel & search again</label>
+    <code class="inline solution">switchMap(keys => this.search(keys))</code>
+  </div>
+  <p>
+    You need this last one to deal with the empty responses that you get back
+    due to my dodgy error handling
+  </p>
+  <div>
+    <input type="checkbox" id="error" />
+    <label for="error">Deal with Erin's dodginess</label>
+    <code class="inline solution">filter((response: any) => response.amiibo)</code>
+  </div>
+</section>
+
+<section>
+  <h2>What was that all again?</h2>
+  <input type="checkbox" id="solution" />
+  <label for="solution">The whole solution</label>
+  <pre class="solution"><code>ngOnInit() &#123;
+  this.imgSrc = this.amiibo.valueChanges.pipe(
+    filter(text => text.length > 2),
+    debounceTime(400),
+    distinctUntilChanged(),
+    switchMap(keys => this.search(keys)),
+    filter((response: any) => response.amiibo),
+    map((response: any) => response.amiibo[0].image)
+  )
+}</code></pre>
+</section>
+
+<section>
+  And that's pretty much it. You now know as much about Observables as I do.
 </section>
