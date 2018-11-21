@@ -9,7 +9,7 @@
   <p>You can also create your own custom events.</p>
   <code>@Output() changeState = new EventEmitter&lt;string>();</code>
   <p>And emit them.</p>
-  <code>done.emit('opened')</code>
+  <code>changeState.emit('opened')</code>
   <p>And you can listen for them just like standard events.</p>
   <code>&lt;my-accordion (changeState)="handleStateChange($event)">&lt;/my-accordion></code>
   <p>
